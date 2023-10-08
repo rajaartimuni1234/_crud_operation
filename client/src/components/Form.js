@@ -12,12 +12,13 @@ const Form = () => {
                 email:userEmail,
             };
 
-            const res= await axios.post('/createUser', data);
+           const res= await axios.post('/createUser', data);
+           console.log(res);
         }
         catch (err){
             console.log(err);
         }
-    }
+    };
 
   
     const handleSubmit=(e)=>{
