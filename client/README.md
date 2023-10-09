@@ -330,3 +330,86 @@ Now lets write a function which will make a GET request to our API at http://loc
 ```
 Now we need to run this function as soon as the page loads and to do that we can use useeffect hook
 
+```js
+useEffect(()=>{
+  fetchUserData();
+},[userData]);
+```
+
+Note: in dependency array we are adding userData, so that the useEffect hook re-renders the UI whenever there is any change 
+
+Now to display the users we need to use userData state variable and loop through it to generate the data dynamically
+
+```js
+<tbody>
+  {userData &&
+    userData.map((user) => (
+      <tr key={user._id}>
+        <td className="px-4 py-3">{user.name}</td>
+        <td className="px-4 py-3">{user.email}</td>
+        <td className="px-4 py-3">
+          <button className="hover:text-green-500">Edit</button>
+        </td>
+        <td className="px-4 py-3 text-lg text-gray-900">
+          <button className="hover:text-red-500">Delete</button>
+        </td>
+      </tr>
+    ))}
+</tbody>
+
+```
+
+Now if we have users in our database then they will be displayed on the page load 
+
+Now lets make our edit button work
+
+```js
+const handleEdit = async (user) => {
+  try {
+    const userName = prompt("Enter new name");
+    const userEmail = prompt("Enter new email");
+
+    if (!userName || !userEmail) {
+      console.log("Please enter both name and email");
+    } else {
+      const resp = await axios.put(`/editUser/${user._id}`, {
+        name: userName,
+        email: userEmail,
+      });
+    }
+  } catch (error) {
+    console.log(error.response.data.message);
+  }
+};
+
+// Add onClick in edit button as shown below
+<button className="hover:text-green-500" onClick={() => handleEdit(user)}>
+  Edit
+</button>;
+
+```
+
+With this our edit button should work
+
+Lets do the same with our delete button
+
+
+```js
+const handleDelete = async (userId) => {
+  try {
+    const resp = await axios.delete(`/deleteUser/${userId}`);
+
+    if (resp.data.success) {
+      console.log("User deleted successfully");
+    }
+  } catch (error) {
+    console.log(error.response.data.message);
+  }
+};
+
+// Add onClick in delete button as shown below
+
+<button className="hover:text-red-500" onClick={() => handleDelete(user._id)}>
+  Delete
+</button>;
+```
