@@ -12,6 +12,39 @@ const UsersList = () => {
         }
     }
 
+     const handleEdit =async (user)=>{
+        try {
+            const userName =prompt("enter new name");
+            const userEmail =prompt("enter new email");
+            
+            if (!userName || !userEmail) {
+                console.log("please enter both name and email")
+            }
+            else {
+                const resp =await axios.put(`/editUser/${user._id}`,{
+                    name:userName,
+                    email:userEmail,
+                });
+                console.log(resp)
+            }
+ 
+        } catch (err){
+            console.log(err.response.data.message);
+        }
+    }
+
+     const handleDelete =async (userId)=>{
+        try{
+            const resp=await axios.delete(`/deleteUser/${userId}`);
+         
+            if(resp.data.success){
+                console.log("user deleted sucessfully");
+            }
+        }catch(err){
+            console.log(err.response.data.message);
+        }
+    }
+
     useEffect (()=>{
         fetchUsersData();  
     }, [userData]);
@@ -43,18 +76,23 @@ const UsersList = () => {
                         </tr>
                     </thead>
 
-                    <tr>
-                        <td className='px-4 py-3'>username</td>
-                        <td className='px-4 py-3'>user email</td>
-                        <td className='px-4 py-3'>
-                            <button className='
-                            hover:text-green-500'>Edit</button>
-                        </td>
-
-                        <td className='px-4 py-3 text-lg text-gray-900'>
-                            <button className=' hover:text-red-500'>Edit</button>
-                        </td>
-                    </tr>
+                          <tbody>
+                {userData && userData.map((user)=>(
+                           <tr key={user._id}>
+                           <td className='px-4 py-3'>{user.name}</td>
+                           <td className='px-4 py-3'>{user.email}</td>
+                           <td className='px-4 py-3'>
+                               <button className='
+                               hover:text-green-500' onClick={()=>handleEdit}>Edit</button>
+                           </td>
+   
+                           <td className='px-4 py-3 text-lg text-gray-900'>
+                               <button className=' hover:text-red-500' onClick={()=> handleDelete}>Edit</button>
+                           </td>
+                       </tr>
+                ))}
+      
+             </tbody>
                 </table>
             </div>
         </div>
